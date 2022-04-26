@@ -30,7 +30,7 @@ transform = transforms.Compose([ Resize(224, interpolation=BICUBIC),
                   RandomResizedCrop(224),
 	          RandomHorizontalFlip(),
 		  RandomRotation(30),
-		  ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5)
+		  ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5),
                   ToTensor(),
                   Normalize((0.48145466, 0.4578275, 0.40821073), (0.26862954, 0.26130258, 0.27577711)),])
 

@@ -1,4 +1,4 @@
-#Experiment Intro
+##Experiment Intro##
 
 In this experiment, CLIP is used as the teacher network to train a resnet-18 model on CIFAR-100 dataset
 

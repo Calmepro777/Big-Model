@@ -30,13 +30,13 @@ parser.add_argument("-m", "--momentum", default=0.9, type = float, help = 'Momen
 parser.add_argument('--lr', '--learning-rate', default=0.1, type=float, help = 'Initial learning rate', dest='lr')
 args = parser.parse_args()
 
-tnet, preprocess = clip.load("RN50")
+tnet, preprocess = clip.load("ViT-B/32")
 tnet.cuda().eval()
 
 from torchvision.datasets import CIFAR100
-cifar100 = CIFAR100("~/data", transform = preprocess, download = True)
+cifar100 = CIFAR100("~/data", download = True)#removed transform!!!!!
 
-text_descriptions = [f"This is a photo of a {label}" for label in cifar100.classes]
+text_descriptions = [f"A photo of a {label}" for label in cifar100.classes]
 text_tokens = clip.tokenize(text_descriptions).cuda()
 
 transform = transforms.Compose([ RandomResizedCrop(224),
@@ -47,7 +47,7 @@ transform = transforms.Compose([ RandomResizedCrop(224),
                   		 Normalize((0.48145466, 0.4578275, 0.40821073), (0.26862954, 0.26130258, 0.27577711)),]) 
 
 train_set = datasets.CIFAR100("~/data",train = True, download = True, transform = transform)
-train_loader = DataLoader(train_set, batch_size = args.batch_size, num_workers = 4, shuffle = True)
+train_loader = DataLoader(train_set, batch_size = args.batch_size, num_workers = 1, shuffle = True)
 
 if args.path:
   snet = torch.load(args.path)
@@ -61,7 +61,7 @@ torch.backends.cudnn.benchmark = True
 
 with torch.no_grad():
     text_features = tnet.encode_text(text_tokens).float()
-text_features /= text_features.norm(dim = -1, keepdim = True)
+    text_features /= text_features.norm(dim = -1, keepdim = True)
 
 def dst_epoch(loader, student, teacher, alpha, opt = None, temp = 1, text_features = text_features):
   total_corr, total_loss = 0.,0.
@@ -86,14 +86,14 @@ def dst_epoch(loader, student, teacher, alpha, opt = None, temp = 1, text_featur
   return avg_loss, acc
 
 opt = optim.SGD(snet.parameters(), lr = args.lr, weight_decay = args.weight_decay, momentum = args.momentum)
-scheduler = optim.lr_scheduler.StepLR(opt, step_size = 50, gamma=0.1)
+scheduler = optim.lr_scheduler.MultiStepLR(opt, milestones=[90,180], gamma=0.1)
 print("Epoch", "Loss","Accuracy", sep = "\t")
 for t in range(args.epoch):
     loss, acc = dst_epoch(train_loader, snet, tnet, args.alpha, opt = opt, temp = args.distill_temp)
     scheduler.step()
     print(t,*("{:.5f}".format(i)for i in (loss,acc)), sep = "\t")
-    torch.save(snet,'./snet.pth')
-torch.save(snet,'./snet.pth')
+    torch.save(snet,'./snet_sv0.pth')
+torch.save(snet,'./snet_sgd_vitb32.pth')
 
 # https://github.com/MingSun-Tse/Regularization-Pruning/tree/a4044028edaacca4e7a063c602170b2fffad0a84 loader, batch size, weight decay, learning rate + adjust
 # https://github.com/openai/CLIP/blob/main/clip/clip.py transform

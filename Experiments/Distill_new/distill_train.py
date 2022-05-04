@@ -22,7 +22,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--path", type = str, default = None, help = "Path to the model")
 parser.add_argument("-e", "--epoch", type = int, default = 120, help = "Number of trianing epoches")
-parser.add_argument("-b", "--batch_size", type = int, default = 128, help = "Training batch size")
+parser.add_argument("-b", "--batch_size", type = int, default = 256, help = "Training batch size")
 parser.add_argument("-w", "--weight_decay", type = float, default = 5e-4, help = "Optimizer weight decay")
 parser.add_argument("-t", "--distill_temp", type = int, default = 10, help = "Distillation_temperature")
 parser.add_argument("-a", "--alpha", type = float, default = 0.1, help = "Balance the influence between teacher network and class labels")
@@ -34,7 +34,7 @@ tnet, preprocess = clip.load("ViT-B/32")
 tnet.cuda().eval()
 
 from torchvision.datasets import CIFAR100
-cifar100 = CIFAR100("~/data", download = True)#removed transform!!!!!
+cifar100 = CIFAR100("~/data",transform = preprocess, download = True)
 
 text_descriptions = [f"A photo of a {label}" for label in cifar100.classes]
 text_tokens = clip.tokenize(text_descriptions).cuda()
@@ -86,14 +86,14 @@ def dst_epoch(loader, student, teacher, alpha, opt = None, temp = 1, text_featur
   return avg_loss, acc
 
 opt = optim.SGD(snet.parameters(), lr = args.lr, weight_decay = args.weight_decay, momentum = args.momentum)
-scheduler = optim.lr_scheduler.MultiStepLR(opt, milestones=[90,180], gamma=0.1)
+scheduler = optim.lr_scheduler.MultiStepLR(opt, milestones=[60, 90], gamma=0.1)
 print("Epoch", "Loss","Accuracy", sep = "\t")
 for t in range(args.epoch):
     loss, acc = dst_epoch(train_loader, snet, tnet, args.alpha, opt = opt, temp = args.distill_temp)
     scheduler.step()
     print(t,*("{:.5f}".format(i)for i in (loss,acc)), sep = "\t")
-    torch.save(snet,'./snet_sv0.pth')
-torch.save(snet,'./snet_sgd_vitb32.pth')
+    torch.save(snet,'./snet_sv1.pth')
+torch.save(snet,'./snet_sgd_vitb32_0.pth')
 
 # https://github.com/MingSun-Tse/Regularization-Pruning/tree/a4044028edaacca4e7a063c602170b2fffad0a84 loader, batch size, weight decay, learning rate + adjust
 # https://github.com/openai/CLIP/blob/main/clip/clip.py transform

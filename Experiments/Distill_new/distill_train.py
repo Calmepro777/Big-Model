@@ -21,7 +21,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--path", type = str, default = None, help = "Path to the model")
-parser.add_argument("-e", "--epoch", type = int, default = 120, help = "Number of trianing epoches")
+parser.add_argument("-e", "--epoch", type = int, default = 240, help = "Number of trianing epoches")
 parser.add_argument("-b", "--batch_size", type = int, default = 256, help = "Training batch size")
 parser.add_argument("-w", "--weight_decay", type = float, default = 5e-4, help = "Optimizer weight decay")
 parser.add_argument("-t", "--distill_temp", type = int, default = 10, help = "Distillation_temperature")
@@ -54,7 +54,7 @@ if args.path:
 else:
   snet = models.resnet18(num_classes = 100, pretrained = False)
 snet.cuda()
-snet.eval()
+#snet.train()
 
 torch.manual_seed(0)
 torch.backends.cudnn.benchmark = True
@@ -86,14 +86,15 @@ def dst_epoch(loader, student, teacher, alpha, opt = None, temp = 1, text_featur
   return avg_loss, acc
 
 opt = optim.SGD(snet.parameters(), lr = args.lr, weight_decay = args.weight_decay, momentum = args.momentum)
-scheduler = optim.lr_scheduler.MultiStepLR(opt, milestones=[60, 90], gamma=0.1)
+scheduler = optim.lr_scheduler.MultiStepLR(opt, milestones = [80, 160, 240], gamma = 0.1)
 print("Epoch", "Loss","Accuracy", sep = "\t")
 for t in range(args.epoch):
+    snet.train()
     loss, acc = dst_epoch(train_loader, snet, tnet, args.alpha, opt = opt, temp = args.distill_temp)
     scheduler.step()
     print(t,*("{:.5f}".format(i)for i in (loss,acc)), sep = "\t")
-    torch.save(snet,'./snet_sv1.pth')
-torch.save(snet,'./snet_sgd_vitb32_0.pth')
+    torch.save(snet,'./snet_sv.pth')
+torch.save(snet,'./snet_sgd_vitb32.pth')
 
 # https://github.com/MingSun-Tse/Regularization-Pruning/tree/a4044028edaacca4e7a063c602170b2fffad0a84 loader, batch size, weight decay, learning rate + adjust
 # https://github.com/openai/CLIP/blob/main/clip/clip.py transform
@@ -101,4 +102,4 @@ torch.save(snet,'./snet_sgd_vitb32_0.pth')
 # https://github.com/weiaicunzai/pytorch-cifar100/blob/master/train.py batch_size
 # https://intellabs.github.io/distiller/knowledge_distillation.html distillation temperature
 # https://github.com/openai/CLIP/blob/main/notebooks/Interacting_with_CLIP.ipynb text
-# https://arxiv.org/pdf/1905.04753.pdf weight decay
+# https://arxiv.org/pdf/1905.04753.pdf weight_decay

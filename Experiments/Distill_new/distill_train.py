@@ -86,7 +86,7 @@ def dst_epoch(loader, student, teacher, alpha, opt = None, temp = 1, text_featur
   return avg_loss, acc
 
 opt = optim.SGD(snet.parameters(), lr = args.lr, weight_decay = args.weight_decay, momentum = args.momentum)
-scheduler = optim.lr_scheduler.MultiStepLR(opt, milestones = [80, 160, 240], gamma = 0.1)
+scheduler = optim.lr_scheduler.MultiStepLR(opt, milestones = [60, 120, 180], gamma = 0.1)
 print("Epoch", "Loss","Accuracy", sep = "\t")
 for t in range(args.epoch):
     snet.train()

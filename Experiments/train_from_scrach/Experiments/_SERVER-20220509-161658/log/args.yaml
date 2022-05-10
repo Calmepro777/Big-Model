@@ -1,0 +1,13 @@
+CodeID: GitNotFound
+batch_size: 256
+cache_ignore: ''
+debug: false
+epoch: 210
+experiments_dir: null
+lr: 0.01
+momentum: 0.9
+note: ''
+path: ./ckpt_rn18.pth
+project_name: ''
+screen_print: false
+weight_decay: 0.0005

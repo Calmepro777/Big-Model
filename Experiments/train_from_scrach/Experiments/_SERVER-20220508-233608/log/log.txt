@@ -1,0 +1,50 @@
+cd /home/wu.qife/CLIP/Experiments
+CUDA_VISIBLE_DEVICES=0 python rn18_scratch.py
+
+[233608 5756 2022/05/08-23:36:08] Warning! Git not found under this project. Highly recommended to use Git to manage code.
+('batch_size': 256) ('cache_ignore': ) ('CodeID': GitNotFound) ('debug': False) ('epoch': 240) ('experiments_dir': None) ('lr': 0.1) ('momentum': 0.9) ('note': ) ('path': None) ('project_name': ) ('screen_print': False) ('weight_decay': 0.0005) 
+
+[233608 5756 2022/05/08-23:36:09] ==> Caching various config files to 'Experiments/_SERVER-20220508-233608/.caches'
+[233608 5756 2022/05/08-23:36:09] ==> Caching done (time: 0.01s)
+[233608 5756 2022/05/08-23:36:09] Files already downloaded and verified
+/home/wu.qife/anaconda3/envs/dl/lib/python3.7/site-packages/torch/utils/data/dataloader.py:490: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  cpuset_checked))
+[233608 5756 2022/05/08-23:36:12] Epoch	Loss	Accuracy
+[233608 5756 2022/05/08-23:38:35] 0	4.08275	0.08008
+[233608 5756 2022/05/08-23:41:01] 1	3.74201	0.12404
+[233608 5756 2022/05/08-23:43:24] 2	3.52148	0.16256
+[233608 5756 2022/05/08-23:45:47] 3	3.30347	0.20280
+[233608 5756 2022/05/08-23:48:11] 4	3.03920	0.24728
+[233608 5756 2022/05/08-23:50:34] 5	2.79512	0.29654
+[233608 5756 2022/05/08-23:52:50] 6	2.62017	0.33278
+[233608 5756 2022/05/08-23:55:03] 7	2.45601	0.36482
+[233608 5756 2022/05/08-23:57:22] 8	2.31062	0.39890
+[233608 5756 2022/05/08-23:59:40] 9	2.20900	0.41920
+[233608 5756 2022/05/09-00:02:01] 10	2.12930	0.43984
+[233608 5756 2022/05/09-00:04:19] 11	2.05247	0.45738
+[233608 5756 2022/05/09-00:06:34] 12	1.99417	0.47322
+[233608 5756 2022/05/09-00:08:50] 13	1.94755	0.48504
+[233608 5756 2022/05/09-00:11:06] 14	1.89729	0.49646
+[233608 5756 2022/05/09-00:13:26] 15	1.86557	0.50474
+[233608 5756 2022/05/09-00:15:42] 16	1.82294	0.51886
+[233608 5756 2022/05/09-00:17:56] 17	1.77841	0.52428
+[233608 5756 2022/05/09-00:20:12] 18	1.77683	0.52578
+[233608 5756 2022/05/09-00:22:31] 19	1.74805	0.53242
+[233608 5756 2022/05/09-00:24:50] 20	1.72631	0.53928
+[233608 5756 2022/05/09-00:27:11] 21	1.70114	0.54390
+[233608 5756 2022/05/09-00:29:31] 22	1.67322	0.54986
+[233608 5756 2022/05/09-00:31:51] 23	1.66251	0.55332
+[233608 5756 2022/05/09-00:34:16] 24	1.64356	0.55854
+[233608 5756 2022/05/09-00:36:37] 25	1.63096	0.56118
+[233608 5756 2022/05/09-00:38:58] 26	1.62843	0.56182
+[233608 5756 2022/05/09-00:41:18] 27	1.61009	0.56784
+[233608 5756 2022/05/09-00:43:37] 28	1.59528	0.56990
+[233608 5756 2022/05/09-00:45:59] 29	1.59103	0.57390
+[233608 5756 2022/05/09-00:48:18] 30	1.56410	0.58066
+[233608 5756 2022/05/09-00:50:40] 31	1.57249	0.57726
+Traceback (most recent call last):
+  File "rn18_scratch.py", line 82, in <module>
+    loss, acc = epoch(train_loader, model = model, opt = opt)
+  File "rn18_scratch.py", line 66, in epoch
+    total_corr += (yp.max(dim=1)[1] == y).sum().item()
+KeyboardInterrupt

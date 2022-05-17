@@ -1,0 +1,21 @@
+CodeID: GitNotFound
+alpha: 0.1
+batch_size: 256
+cache_ignore: ''
+debug: false
+distill_temp: 30
+epoch: 160
+experiments_dir: null
+lr: 0.1
+mi:
+- 60
+- 90
+- 120
+- 150
+momentum: 0.9
+note: ''
+path: null
+project_name: vitl14_5
+screen_print: false
+tnet: ViT-L/14
+weight_decay: 0.0005

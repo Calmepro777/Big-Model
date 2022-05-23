@@ -53,6 +53,8 @@ transform = transforms.Compose([ RandomResizedCrop(224),
 
 train_set = datasets.CIFAR100("~/data",train = True, download = True, transform = transform)
 train_loader = DataLoader(train_set, batch_size = args.batch_size, num_workers = 1, shuffle = True)
+test_set = datasets.CIFAR100("/data",train=False,download=True, transform=transform)
+test_loader = DataLoader(test_set, batch_size=32, num_workers = 1, shuffle = False)
 
 if args.path:
   snet = resnet20(num_classes = 100)
@@ -93,6 +95,21 @@ def dst_epoch(loader, student, teacher, alpha, opt = None, temp=1, text_features
   acc = total_corr / len(loader.dataset) 
   return avg_loss, acc
 
+def eval_net(string, loader = test_loader, model = snet):
+  correct = 0
+  total = 0
+  with torch.no_grad():
+    for img,labels in loader:
+        img, labels = img.cuda(), labels.cuda()
+        # calculate outputs by running images through the network
+        outputs = model(img)
+        # the class with the highest energy is what we choose as prediction
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+  print(f'Accuracy of the network on the {string} set: {100 * correct / total} %')
+
 opt = optim.SGD(snet.parameters(), lr = args.lr, weight_decay = args.weight_decay, momentum = args.momentum)
 if args.path:
    opt.load_state_dict(ckpt['optimizer_state_dict'])
@@ -112,6 +129,10 @@ for t in range(args.epoch):
             'optimizer_state_dict': opt.state_dict(),
             }, './ckpt_rn20_vitl14.pth')
 torch.save(snet,'./rn20_vitl14.pth')
+
+eval_net("train")
+
+eval_net("test")
 
 print(args)
 # https://github.com/MingSun-Tse/Regularization-Pruning/tree/a4044028edaacca4e7a063c602170b2fffad0a84 loader, batch size, weight decay, learning rate + adjust
